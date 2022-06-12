@@ -1,6 +1,6 @@
 @name Spidertank V1.0
 @inputs Base:entity Seat:entity CamAng:angle W2 S2 Shift2 Crouch2 CamAng2:angle
-@outputs CamPos:vector CamDistance Active Right_extend2 Left_extend2
+@outputs CamPos:vector CamDistance Active Right_extend2 Left_extend2 Distance
 
 #-- front legs bones
 @inputs [Thigh_F_R Thigh_F_L Leg_F_R Leg_F_L Calf_F_R Calf_F_L Foot_F_R Foot_F_L]:entity
@@ -42,7 +42,7 @@
 @persist Thigh_Middle_Left_Base Thigh_Middle_Left_Base_P Thigh_Middle_Left Leg_Middle_Left Calf_Middle_Left
 
 #feet
-@persist Foot_Front_Right Foot_Front_Left Foot_Back_Right Foot_Back_Left Foot_Middle_Right Foot_Middle_Left
+@persist Foot_Front_Right Foot_Front_Left Foot_Back_Right Foot_Back_Left Foot_Middle_Right Foot_Middle_Left Front_Angle_Offset Middle_Angle_Offset Back_Angle_Offset
 
 #-- feet variables
 #Front Left
@@ -117,7 +117,7 @@ if (first()) {
     Back_Knee_Length = 125
     
     
-    Mech_height = 175
+    Mech_height = 165
     
     FrontPos=vec(85,48,-5)
     MiddlePos=vec(5,60,2)
@@ -159,6 +159,15 @@ if (first()) {
             0.65,0.55 #br start,length
         )
     )
+    
+    #-- Experimental
+    
+    Front_Angle_Offset=0
+    Middle_Angle_Offset=0
+    Back_Angle_Offset=0
+    
+    
+    
     
     FLengthA = Front_Thigh_Length
     FLengthB = Front_Calf_Length
@@ -772,12 +781,12 @@ if (first()) {
     
     Height_Adj = Mech_height*((0.95/(1+Height_Fix+RunHeightSin+clamp(Duck*0.3,0,1.1))))
     
-    local Distance = (Ranger_Left_Front:distance()+Ranger_Right_Front:distance())/2
+    local Distance = ((Ranger_Left_Front:distance()*0.25)+(Ranger_Right_Front:distance()*0.25)+Ranger_Right_Middle:distance()+Ranger_Left_Middle:distance()+Ranger_Right_Back:distance()+Ranger_Left_Back:distance())/6
     
     local Movement_Direction = (((Base:forward()*(W-S))+(Base:right()*(D-A)))*vec(1,1,0)):normalized()*On_Ground
     
     if(On_Ground&!Jumpwait){
-        local Stand_Force=vec(0,0,((Height_Adj)*0.75)-Distance)*1.5
+        local Stand_Force=vec(0,0,((Height_Adj)*0.75)-Distance*1.1)*1.5
         local Damping_Force=(-Base:vel()*vec(0.2,0.2,0.5))*Damping_Multiplier
         local Move_Force=(((Movement_Direction)*Base_Speed)*(1+(Sprint*(Run_Speed_Mult*(1-(Crouch_Run_Speed_Reduce_Mult*Duck)))))*Speed_Mult)*(1-(Crouch_Speed_Reduce_Mult*Duck))
         local Move_Force2=Move_Force*(1+(((-0.24*sin(Middle_Right_time*180))+(0.6*sin(Front_Right_time*180)))*Sprint))
@@ -821,29 +830,29 @@ if (first()) {
     }
     
     #front left leg
-    ik(Base, IDOFFSET+Leg_Base_Front_Left, IDOFFSET+Thigh_Front_Left_Base, IDOFFSET+Thigh_Front_Left, IDOFFSET+Leg_Front_Left, IDOFFSET+Calf_Front_Left, 
+    ik(Front_Angle_Offset, Base, IDOFFSET+Leg_Base_Front_Left, IDOFFSET+Thigh_Front_Left_Base, IDOFFSET+Thigh_Front_Left, IDOFFSET+Leg_Front_Left, IDOFFSET+Calf_Front_Left, 
     IDOFFSET+Foot_Front_Left, FLengthA, FLengthB, FLengthC, holoEntity(Thigh_Front_Left_Base), Ent1Pos, On_Ground, -90, (Front_Left_a_real*ang(1,0,1)))
     
     #front right leg
-    ik(Base, IDOFFSET+Leg_Base_Front_Right, IDOFFSET+Thigh_Front_Right_Base, IDOFFSET+Thigh_Front_Right, IDOFFSET+Leg_Front_Right, IDOFFSET+Calf_Front_Right, 
+    ik(Front_Angle_Offset, Base, IDOFFSET+Leg_Base_Front_Right, IDOFFSET+Thigh_Front_Right_Base, IDOFFSET+Thigh_Front_Right, IDOFFSET+Leg_Front_Right, IDOFFSET+Calf_Front_Right, 
     IDOFFSET+Foot_Front_Right, FLengthA, FLengthB, FLengthC, holoEntity(Thigh_Front_Right_Base), Ent2Pos, On_Ground, -90, (Front_Right_a_real*ang(1,0,1)))
     
     
     #middle left leg
-    ik(Base, IDOFFSET+Leg_Base_Middle_Left, IDOFFSET+Thigh_Middle_Left_Base, IDOFFSET+Thigh_Middle_Left, IDOFFSET+Leg_Middle_Left, IDOFFSET+Calf_Middle_Left, 
+    ik(Middle_Angle_Offset, Base, IDOFFSET+Leg_Base_Middle_Left, IDOFFSET+Thigh_Middle_Left_Base, IDOFFSET+Thigh_Middle_Left, IDOFFSET+Leg_Middle_Left, IDOFFSET+Calf_Middle_Left, 
     IDOFFSET+Foot_Middle_Left, MLengthA, MLengthB, MLengthC, holoEntity(Thigh_Middle_Left_Base), Ent3Pos, On_Ground, -90, (Middle_Left_a_real*ang(1,0,1)))
     
     #middle right leg
-    ik(Base, IDOFFSET+Leg_Base_Middle_Right, IDOFFSET+Thigh_Middle_Right_Base, IDOFFSET+Thigh_Middle_Right, IDOFFSET+Leg_Middle_Right, IDOFFSET+Calf_Middle_Right, 
+    ik(Middle_Angle_Offset, Base, IDOFFSET+Leg_Base_Middle_Right, IDOFFSET+Thigh_Middle_Right_Base, IDOFFSET+Thigh_Middle_Right, IDOFFSET+Leg_Middle_Right, IDOFFSET+Calf_Middle_Right, 
     IDOFFSET+Foot_Middle_Right, MLengthA, MLengthB, MLengthC, holoEntity(Thigh_Middle_Right_Base), Ent4Pos, On_Ground, -90, (Middle_Right_a_real*ang(1,0,1)))
     
     
     #back left leg
-    ik(Base, IDOFFSET+Leg_Base_Back_Left, IDOFFSET+Thigh_Back_Left_Base, IDOFFSET+Thigh_Back_Left, IDOFFSET+Leg_Back_Left, IDOFFSET+Calf_Back_Left, 
+    ik(Back_Angle_Offset, Base, IDOFFSET+Leg_Base_Back_Left, IDOFFSET+Thigh_Back_Left_Base, IDOFFSET+Thigh_Back_Left, IDOFFSET+Leg_Back_Left, IDOFFSET+Calf_Back_Left, 
     IDOFFSET+Foot_Back_Left, BLengthA, BLengthB, BLengthC, holoEntity(Thigh_Back_Left_Base), Ent5Pos, On_Ground, 90, (Back_Left_a_real*ang(1,0,1)))
     
     #back right leg
-    ik(Base, IDOFFSET+Leg_Base_Back_Right, IDOFFSET+Thigh_Back_Right_Base, IDOFFSET+Thigh_Back_Right, IDOFFSET+Leg_Back_Right, IDOFFSET+Calf_Back_Right, 
+    ik(Back_Angle_Offset, Base, IDOFFSET+Leg_Base_Back_Right, IDOFFSET+Thigh_Back_Right_Base, IDOFFSET+Thigh_Back_Right, IDOFFSET+Leg_Back_Right, IDOFFSET+Calf_Back_Right, 
     IDOFFSET+Foot_Back_Right, BLengthA, BLengthB, BLengthC, holoEntity(Thigh_Back_Right_Base), Ent6Pos, On_Ground, 90, (Back_Right_a_real*ang(1,0,1)))
     
     
