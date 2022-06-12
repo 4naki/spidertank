@@ -763,10 +763,10 @@ if (first()) {
     On_Ground = !Jumpwait&((Ranger_Left_Front:hit()+Ranger_Right_Front:hit()+Ranger_Left_Middle:hit()+Ranger_Right_Middle:hit()+Ranger_Left_Back:hit()+Ranger_Right_Back:hit())>=3)
     
     Base:applyAngForce((ang(0, Base:toLocal(ang(0,CamAng3:yaw(),0)):yaw()*35, 0) + 
-    Base:toLocal(ang((clamp(CamAng3:pitch()*1,-10,10)) + (((-5*sin(Middle_Right_time*180))+(5*sin(Front_Right_time*180)))*(Sprint&On_Ground)), Base:angles():yaw(), clamp(Base:velL():y()*0.04*clamp(abs(Base:velL():x())*0.1,0,1),-2,2)*(On_Ground)))*200 -
+    Base:toLocal(ang((clamp(CamAng3:pitch()*1,-20,20)) + (((-5*sin(Middle_Right_time*180))+(5*sin(Front_Right_time*180)))*(Sprint&On_Ground)), Base:angles():yaw(), clamp(Base:velL():y()*0.04*clamp(abs(Base:velL():x())*0.1,0,1),-2,2)*(On_Ground)))*200 -
     Base:angVel()*20 - ang(Base:angVel():pitch(),0,Base:angVel():roll())*10) * Inertia)
     
-    Height_Fix = clamp(clamp(CamAng3:pitch()*1,-10,15)*0.1,-1,1)*0.3
+    Height_Fix = clamp(clamp(CamAng3:pitch()*1,-20,22)*0.1,-1,1)*0.3
     
     RunHeightSin = ((-0.2*sin(Front_Right_time*180))+(0.2*sin(Middle_Right_time*180)))*(Sprint&On_Ground)
     
