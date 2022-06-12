@@ -656,8 +656,8 @@ if (first()) {
     #Update check code
     
     #ifdef httpRequest(string)
-        Link = ""
-        VersionCheckLink = ""
+        Link = "https://github.com/4naki/spidertank/blob/main/Spidertank%20V1.0"
+        VersionCheckLink = "https://raw.githubusercontent.com/4naki/spidertank/main/version"
         Version = "1.0"
         
         runOnHTTP(1)
