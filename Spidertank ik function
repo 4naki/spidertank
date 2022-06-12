@@ -6,7 +6,7 @@ if(first()){
         return acos((A^2 + B^2 - C^2) / (2*A*B))    
     }
     #function ik(Base2:entity, NBase, NHipA, NHipB, NKnee, NAnkle, NFoot, LengthA, LengthB, LengthC, Base:entity, Target:vector, Ground, Inverted, FootAng:angle) {
-    function ik(Base2:entity, NBase, NHipA, NHipB, NKnee, NAnkle, NFoot, LengthA, LengthB, LengthC, Base:entity, Target:vector, Ground, Inverted, FootAng:angle) {
+    function ik(Offset_Ang, Base2:entity, NBase, NHipA, NHipB, NKnee, NAnkle, NFoot, LengthA, LengthB, LengthC, Base:entity, Target:vector, Ground, Inverted, FootAng:angle) {
         local AxisWorld = Target - holoEntity(NHipA):pos()
         local AxisLocal = holoEntity(NBase):toLocalAxis(AxisWorld)
         
@@ -17,7 +17,7 @@ if(first()){
         local AxisLocal = holoEntity(NHipA):toLocalAxis(AxisWorld)
         local Fraction = 1 - min(1, holoEntity(NHipB):pos():distance(Target) / (LengthA + LengthC) - 0.5)
         
-        holoAng(NHipB, holoEntity(NHipA):toWorld(ang(atan(-AxisLocal:x(), AxisLocal:z()) + 90*Fraction, 180, 0)))
+        holoAng(NHipB, holoEntity(NHipA):toWorld(ang(atan(-AxisLocal:x(), AxisLocal:z()) + Offset_Ang + 90*Fraction, 180, 0)))
         
         local AxisLocal = holoEntity(NHipA):toLocalAxis(Target - holoEntity(NKnee):pos())
         local Distance = min(AxisLocal:length(), LengthB + LengthC)
